@@ -1,0 +1,6 @@
+usr/local/bin/bitcoin2-qt usr/bin
+share/pixmaps/bitcoin232.xpm usr/share/pixmaps
+share/pixmaps/bitcoin216.xpm usr/share/pixmaps
+share/pixmaps/bitcoin2128.png usr/share/pixmaps
+debian/bitcoin2-qt.desktop usr/share/applications
+debian/bitcoin2-qt.protocol usr/share/kde4/services/
