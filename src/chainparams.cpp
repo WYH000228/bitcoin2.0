@@ -92,7 +92,7 @@ public:
         consensus.nPowTargetTimespanV2 = 4000;
         consensus.nPowTargetSpacing = 1 * 64;
         consensus.fPowAllowMinDifficultyBlocks = false;
-        consensus.fPowNoRetargeting = true;
+        consensus.fPowNoRetargeting = false;
         consensus.fPoSNoRetargeting = false;
         consensus.nRuleChangeActivationThreshold = 1916; // 95% of 2016
         consensus.nMinerConfirmationWindow = 2016; // nPowTargetTimespan / nPowTargetSpacing
@@ -153,8 +153,8 @@ public:
         // This is fine at runtime as we'll fall back to using them as a oneshot if they don't support the
         // service bits we want, but we should get them updated to support all service bits wanted by any
         // release ASAP to avoid it where possible.
-		vSeeds.emplace_back("95.183.9.128"); //BITCOIN2mainnet
-		vSeeds.emplace_back("37.143.13.195"); //BITCOIN2mainnet
+		vSeeds.emplace_back("162.0.237.27"); //BITCOIN2mainnet
+		vSeeds.emplace_back("162.0.221.213"); //BITCOIN2mainnet
 		//vSeeds.emplace_back("bitcoin2chain11.dynu.net"); //BITCOIN2mainnet
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,28);

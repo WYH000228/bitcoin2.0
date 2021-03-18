@@ -1373,16 +1373,19 @@ bool ReadRawBlockFromDisk(std::vector<uint8_t>& block, const CBlockIndex* pindex
 
 CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
 {
-    if(nHeight <= consensusParams.nLastPOWBlock)
-        return 5 * COIN;
+	//if (nHeight == 0) return 25000000 * COIN;
+		if(nHeight > 0 && nHeight <= 1) {
+		return 3300000 * COIN;
+		}
+	
 
-    int halvings = (nHeight - consensusParams.nLastPOWBlock - 1) / consensusParams.nSubsidyHalvingInterval;
-    // Force block reward to zero when right shift is undefined.
-
-    CAmount nSubsidy = 7 * COIN;
-    // Subsidy is cut in half every 250000 blocks which will occur approximately every 1 year.
-    nSubsidy >>= halvings;
-    return nSubsidy;
+     else if (nHeight > 2 && nHeight <= 86400) {
+      return 0.001 * COIN;
+    } else if (nHeight > 86400 && nHeight <= 99999999) {
+      return 3 * COIN;
+    } else {
+      return 3 * COIN;
+    }
 }
 
 bool IsInitialBlockDownload()
@@ -4679,17 +4682,11 @@ bool CheckBlock(const CBlock& block, CValidationState& state, const Consensus::P
         if(block.vtx[1]->vin.empty() || block.prevoutStake != block.vtx[1]->vin[0].prevout){
             return state.DoS(100, false, REJECT_INVALID, "bad-cs-invalid", false, "prevoutStake in block header does not match coinstake in block body");
         }
-		        CTransactionRef txPrevout;
-
 		//minimal
-		        if(txPrevout || block.vtx[1].vin[0].prevout.n  > Params().StakeInputMinimal()){
+		        if(block.vtx[1]->vin.empty()  < Params().StakeInputMinimal()){
                 return state.DoS(100, error("CheckBlock() : stake input below minimum value"));
         }
 		
-		
-				//        if(block.vtx[1]->vin.empty()  < Params().StakeInputMinimal()){
-          //      return state.DoS(100, error("CheckBlock() : stake input below minimum value"));
-      //  }
         //the rest of the transactions must not be coinstake
         for (unsigned int i = 2; i < block.vtx.size(); i++)
             if (block.vtx[i]->IsCoinStake())
@@ -5099,6 +5096,10 @@ bool CChainState::AcceptBlockHeader(const CBlockHeader& block, CValidationState&
             // Reject proof of stake before height COINBASE_MATURITY
             if (nHeight < COINBASE_MATURITY)
                 return state.DoS(100, false, REJECT_INVALID, "reject-pos", false, strprintf("reject proof-of-stake at height %d", nHeight));
+
+            // Reject proof of stake before height nLastPOWBlock
+            if (block.IsProofOfStake() && nHeight < chainparams.GetConsensus().nLastPOWBlock)
+                return state.DoS(100, false, REJECT_INVALID, "reject-pos", false, strprintf("reject proof-of-stake not Last POW Block %d", nHeight));
 
             // Check coin stake timestamp
             if(!CheckCoinStakeTimestamp(block.nTime))
